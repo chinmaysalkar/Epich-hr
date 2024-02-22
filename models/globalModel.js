@@ -29,7 +29,14 @@ const roleSchema = new mongoose.Schema({
       },
 
     }
+  },
+  status:{
+    'type':Boolean,
+    'default':true
   }
+},
+{
+  timestamps: true
 });
 
 const Role = mongoose.model("Role", roleSchema);

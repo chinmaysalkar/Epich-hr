@@ -24,7 +24,13 @@ const payslipSchema = new mongoose.Schema({
     total:{
         type: Number,
         required: true,
+    },
+    status:{
+        type: Boolean,
+        default: true,
     }
+}, {
+    timestamps: true
 });
 
 const PaySlip = mongoose.model("Payslip", payslipSchema);

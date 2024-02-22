@@ -33,7 +33,7 @@ const createUser = async (req, res) => {
 
 const viewUser = async (req, res) => {
     try {
-        const users = await User.find().populate({path:'role'})
+        const users = await User.find({status:true}).populate({path:'role'})
         
         res.status(200).json({ 
             success: true, 
@@ -56,11 +56,33 @@ const updateUser = async (req, res) => {
         }
 
         const updatedUser = await User.findByIdAndUpdate(id, updatedData, { new: true });
-        if (!updatedUser) {
+        if (!updatedUser || !updatedUser.status) {
             return res.status(404).json({ success: false, message: 'User not found' });
         }
 
         res.status(200).json({ success: true, message: 'User updated successfully', data: updatedUser });
+    } catch (error) {
+        res.status(500).json({ success: false, error: error.message });
+    }
+}
+
+const deleteUser = async (req, res) => {
+    try {
+        const { id } = req.body;
+
+        if (!id) {
+            return res.status(400).json({ success: false, message: 'User ID is required' });
+        }
+
+        const user = await User.findById(id);
+        if (!user  || !user.status) {
+            return res.status(404).json({ success: false, message: 'User not found' });
+        }
+        //mark as deleted
+        user.status = false
+        await user.save();
+        res.status(200).json({ success: true, message: 'User deleted successfully'});
+
     } catch (error) {
         res.status(500).json({ success: false, error: error.message });
     }
@@ -74,6 +96,12 @@ const login = async(req, res) => {
             return res.status(404).json({ 
                 success: false, 
                 error: 'Email  is Incorrect' 
+            });
+        }
+        if (!userData.status) {
+            return res.status(403).json({ 
+                success: false, 
+                error: 'User has been deleted' 
             });
         }
         const passwordMatch = await bcrypt.compare(password, userData.password);
@@ -108,5 +136,5 @@ const login = async(req, res) => {
 
 
 module.exports = {
-    login, createUser, viewUser
+    login, createUser, viewUser, updateUser, deleteUser
 }

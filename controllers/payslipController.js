@@ -4,8 +4,8 @@ const createPayslip = async (req, res) => {
   try {
     const { title, description, earnings, deduction, total } = req.body;
 
-    // Generating a random string of 5 characters
-    uniqueId = `PAYSLIP_${Math.floor(Math.random() * 8889) + 1111}`;
+    // Generating a random number of 4 characters
+    uniqueId = `PAYSLIP_${Math.floor(Math.random() * (9999 - 1000 + 1)) + 1000}`;
 
     const newPaySlip = new Payslip({
       id: uniqueId,
@@ -32,9 +32,17 @@ const createPayslip = async (req, res) => {
 
 const viewPayslip = async (req, res) => {
   try {
-    const payslip = await Payslip.findById(req.body.id);
+    const { id } = req.body;
 
-    if (!payslip) {
+    if (!id) {
+      return res.status(400).json({
+        success: false,
+        message: "Payslip ID is required",
+      });
+    }
+    const payslip = await Payslip.findById(id);
+
+    if (!payslip || !payslip.status) {
       return res.status(404).json({
         success: false,
         message: "Payslip not found",
@@ -80,8 +88,42 @@ const updatePayslip = async (req, res) => {
   }
 };
 
+const deletePayslip = async (req, res) => {
+  try {
+    const { id } = req.body;
+
+    if (!id) {
+      return res.status(400).json({
+        success: false,
+        message: "Payslip ID is required",
+      });
+    }
+    const payslip = await Payslip.findById(id);
+    if (!payslip || !payslip.status) {
+      return res.status(404).json({
+        success: false,
+        message: "Payslip not found",
+      });
+    }
+    //mark as deleted
+    payslip.status = false
+    await payslip.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Payslip deleted successfully"
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+}
+
 module.exports = {
   createPayslip,
   viewPayslip,
   updatePayslip,
+  deletePayslip
 };

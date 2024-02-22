@@ -21,7 +21,7 @@ const createRole = async(req, res)=> {
 
   const viewRole = async (req, res) => {
     try {
-        const roles = await Role.find();
+        const roles = await Role.find({status:true});
         
         res.status(200).json({ 
             success: true, 
@@ -66,4 +66,37 @@ const createRole = async(req, res)=> {
     }
   }
 
-  module.exports = {createRole, viewRole, updateRole};
+  const deleteRole = async (req, res) => {
+    try {
+      const { id } = req.body;
+      
+      if (!id) {
+        return res.status(400).json({
+          success: false,
+          message: 'Role ID is required',
+        });
+      }
+      const role = await Role.findById(id);
+      if (!role || !role.status) {
+        return res.status(404).json({
+          success: false,
+          message: 'Role not found',
+        });
+      }
+      //mark as deleted
+      role.status = false
+      await role.save();
+      res.status(200).json({
+        success: true,
+        message: 'Role deleted successfully'
+      });
+      
+    } catch (error) {
+      res.status(500).json({
+        success: false,
+        message: error.message,
+      });
+    }
+  }
+
+  module.exports = {createRole, viewRole, updateRole, deleteRole};
