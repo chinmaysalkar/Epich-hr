@@ -49,4 +49,5 @@ router.post("/addClient", image, createClient);
 router.get("/viewClient", viewClient);
 router.put("/updateClient/:clientId", updateClient);
 router.delete("/deleteClient/:clientId", deleteClient);
+
 module.exports = router;
