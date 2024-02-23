@@ -15,12 +15,11 @@ const verifyToken = async (req, res, next) => {
 
     const bearer = token.split(" ");
     const bearerToken = bearer[1];
-    // Verify the token
     const decoded = jwt.verify(bearerToken, process.env.ACCESS_TOKEN_SECRET);
+    req.user = decoded; // Store the decoded token in the request object
 
-    console.log("Token verified successfully. Decoded payload:", decoded);
-    next(); // Continue to the next middleware
-
+    console.log("Token verified successfully.");
+    next();
   } catch (error) {
     res.status(401).json({
       success: false,

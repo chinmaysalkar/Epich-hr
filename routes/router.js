@@ -1,17 +1,21 @@
 const express = require('express');
+const router = express.Router();
 const { verifyToken } = require('../middleware/checkAuth');
-const { login, createUser, viewUser, updateUser, deleteUser } = require('../controllers/userController');
+const { login, createUser, viewUser, updateUser, deleteUser, refreshToken } = require('../controllers/userController');
 const { createRole, viewRole, updateRole, deleteRole } = require('../controllers/roleController');
 const { createPayslip, viewPayslip, updatePayslip, deletePayslip } = require('../controllers/payslipController');
 const { createProject, viewProject, updateProject, deleteProject } = require('../controllers/projectController');
 const {addDepartment,viewDepartment,updateDepartment,deleteDepartment,} = require("../controllers/department");
 const {addHoliday,updateHoliday,viewHoliday,deleteHoliday,} = require("../controllers/hoilidayController");
 const {createClient,viewClient,deleteClient,updateClient,} = require("../controllers/clientController");
+const { createTicket, viewTicket } = require('../controllers/ticketController');
+
 const upload = require("../middleware/multer");
 const image = upload.fields([{ name: "image", maxCount: 1 }]);
-const router = express.Router();
 
 router.get('/login', login);
+router.get('/refresh-token',verifyToken, refreshToken);
+
 router.post('/createUser', createUser);
 router.get('/viewUser',verifyToken,  viewUser);
 router.put('/updateUser', updateUser);
@@ -31,6 +35,9 @@ router.post('/createProject', createProject);
 router.get('/viewProject', viewProject);
 router.put('/updateProject', updateProject);
 router.delete('/deleteProject', deleteProject);
+
+router.post('/createTicket', createTicket);
+router.get('/viewTicket', viewTicket);
 
 //Department
 router.post("/addDepartment", addDepartment);

@@ -12,7 +12,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use("/api", router);
 
-router.get("/", (req, res) => {
+app.get("/", (req, res) => {
   res.send("EpicHR server is running ");
 });
 

@@ -1,12 +1,22 @@
 const User = require("../models/userModel");
 const jwt = require("jsonwebtoken");
 const bcrypt = require('bcrypt');
-const Role = require('../models/globalModel')
 
 const createUser = async (req, res) => {
     try {
-        // Extract user data from the request body
         const { firstName, lastName, gender, email, password, role, phone } = req.body;
+
+        if(!firstName || !lastName || !gender || !email || !password || !role || !phone) {
+            return res.status(400).json({ success: false, message: 'All fields are required' });
+        }
+        const existingUser = await User.findOne({ email });
+        if (existingUser) {
+            return res.status(400)
+              .json({
+                success: false,
+                message: "User with this email already exists",
+              });
+        }
 
         fullName = firstName+ ' '+ lastName;
         const hashedPassword = await bcrypt.hash(password, 10);
@@ -33,7 +43,18 @@ const createUser = async (req, res) => {
 
 const viewUser = async (req, res) => {
     try {
-        const users = await User.find({status:true}).populate({path:'role'})
+        const id = req.user.userId;
+        if (id) {
+            return res.status(400).json({ success: false, message: 'Unable to access userID' });
+        }
+
+        const users = await User.find(id).populate({path:'role'})
+        if (!users || !users.status) {
+            return res.status(404).json({ 
+                success: false, 
+                message: 'Users not found' 
+            });
+        }
         
         res.status(200).json({ 
             success: true, 
@@ -101,7 +122,7 @@ const login = async(req, res) => {
         if (!userData.status) {
             return res.status(403).json({ 
                 success: false, 
-                error: 'User has been deleted' 
+                error: 'User is Inactive' 
             });
         }
         const passwordMatch = await bcrypt.compare(password, userData.password);
@@ -115,12 +136,20 @@ const login = async(req, res) => {
         const accessToken = jwt.sign(
             { userId: userData._id }, 
             process.env.ACCESS_TOKEN_SECRET, 
-            { expiresIn: "1h" }
+            { expiresIn: "1h" }//to change 
+          );
+        const refreshToken = jwt.sign(
+            { userId: userData._id }, 
+            process.env.ACCESS_TOKEN_SECRET, 
+            { expiresIn: "8h" }
           );
           
+        await User.updateOne({ _id: userData._id }, { $set: { refreshToken } });
+
         return res.status(200).json({
             success: true,
             accessToken,
+            refreshToken,
             message: 'Login Successfully'
         })
         
@@ -134,7 +163,24 @@ const login = async(req, res) => {
     }
 }
 
+const refreshToken = async (req, res) => {
+    try {
+        const userId = req.user.userId;
+        //console.log(req.user)
+        const UserData = await User.findById(userId);
+
+        const accessToken = jwt.sign(
+            { userId: UserData._id }, 
+            process.env.ACCESS_TOKEN_SECRET, 
+            { expiresIn: "1h" }//to change 
+          );
+        return res.status(200).json({ success: true, accessToken });
+        
+    } catch (error) {
+        res.status(500).json({ success: false, error: error.message });
+    }
+}
 
 module.exports = {
-    login, createUser, viewUser, updateUser, deleteUser
+    login, createUser, viewUser, updateUser, deleteUser,refreshToken
 }

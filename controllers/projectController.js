@@ -17,7 +17,14 @@ const createProject = async (req, res) => {
           description,
         } = req.body;
 
-        uniqueId = `PROJECT_${Math.floor(Math.random() * (9999 - 1000 + 1)) + 1000}`;
+        if (!title || !duration || !client ) {
+            return res.status(400).json({
+                success: false,
+                message: 'All fields is required'
+            })
+        }
+        //genrating unique project id
+        uniqueId = `PROJECT_${Math.floor(Math.random() * (9000)) + 1000}`;
 
         const newProject = await Project.create({
             projectId : uniqueId,
@@ -50,6 +57,12 @@ const createProject = async (req, res) => {
 const viewProject= async (req, res) => {
     try {
         const {id} = req.body;
+        if (!id) {
+            return res.status(400).json({
+                success: false,
+                message: 'Project ID is required'
+            })
+        }
         const projects = await Project.findById(id)
           .populate({ path: "projectManager" })
           .populate({ path: "members" })
@@ -75,6 +88,12 @@ const viewProject= async (req, res) => {
 const updateProject = async (req, res) => {
     try {
         const {id, ...updateData} = req.body;
+        if (!id) {
+            return res.status(400).json({
+                success: false,
+                message: 'Project ID is required'
+            })
+        }
         const updatedProject = await Project.findByIdAndUpdate(id, { $set: updateData }, { new: true });
         if (!updatedProject || !updatedProject.status) {
             return res.status(404).json({
@@ -98,6 +117,12 @@ const updateProject = async (req, res) => {
 const deleteProject = async (req, res) => {
     try {
         const {id} = req.body;
+        if (!id) {
+            return res.status(400).json({
+                success: false,
+                message: 'Project ID is required'
+            })
+        }
         const deletedProject = await Project.findById(id);
         if (!deletedProject || !deletedProject.status) {
             return res.status(404).json({
