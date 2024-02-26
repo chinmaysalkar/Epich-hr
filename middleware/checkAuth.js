@@ -2,7 +2,7 @@ const jwt = require("jsonwebtoken");
 
 const verifyToken = async (req, res, next) => {
   try {
-    // Extract the token from the request 
+    // Extract the token from the request
     const token =
       req.body.token || req.query.token || req.headers["authorization"];
 
@@ -20,7 +20,6 @@ const verifyToken = async (req, res, next) => {
 
     console.log("Token verified successfully. Decoded payload:", decoded);
     next(); // Continue to the next middleware
-
   } catch (error) {
     res.status(401).json({
       success: false,

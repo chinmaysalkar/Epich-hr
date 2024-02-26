@@ -106,12 +106,9 @@ const deleteHoliday = async (req, res) => {
   }
 };
 
-
-
 module.exports = {
   addHoliday,
   viewHoliday,
   updateHoliday,
   deleteHoliday,
-
 };

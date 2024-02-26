@@ -57,10 +57,10 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: false,
     },
-    status:{
+    status: {
       type: Boolean,
-      default: true
-    }
+      default: true,
+    },
   },
   {
     timestamps: true,
