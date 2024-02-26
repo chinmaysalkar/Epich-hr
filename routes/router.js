@@ -8,7 +8,7 @@ const { createProject, viewProject, updateProject, deleteProject } = require('..
 const {addDepartment,viewDepartment,updateDepartment,deleteDepartment,} = require("../controllers/department");
 const {addHoliday,updateHoliday,viewHoliday,deleteHoliday,} = require("../controllers/hoilidayController");
 const {createClient,viewClient,deleteClient,updateClient,} = require("../controllers/clientController");
-const { createTicket, viewTicket } = require('../controllers/ticketController');
+const { createTicket, viewTicket, deleteTicket, updateTicket } = require('../controllers/ticketController');
 
 const upload = require("../middleware/multer");
 const image = upload.fields([{ name: "image", maxCount: 1 }]);
@@ -38,6 +38,8 @@ router.delete('/deleteProject', deleteProject);
 
 router.post('/createTicket', createTicket);
 router.get('/viewTicket', viewTicket);
+router.put('/updateTicket', updateTicket);
+router.delete('/deleteTicket', deleteTicket);
 
 //Department
 router.post("/addDepartment", addDepartment);
