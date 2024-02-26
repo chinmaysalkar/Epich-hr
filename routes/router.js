@@ -1,5 +1,7 @@
 const express = require("express");
 const { verifyToken } = require("../middleware/checkAuth");
+const { createTicket, viewTicket } = require("../controllers/ticketController");
+
 const {
   login,
   createUser,
@@ -51,7 +53,6 @@ const {
   deleteTask,
 } = require("../controllers/taskController");
 const image = upload.fields([{ name: "image", maxCount: 1 }]);
-const router = express.Router();
 
 router.get("/login", login);
 router.post("/createUser", createUser);
@@ -73,6 +74,9 @@ router.post("/createProject", createProject);
 router.get("/viewProject", viewProject);
 router.put("/updateProject", updateProject);
 router.delete("/deleteProject", deleteProject);
+
+router.post("/createTicket", createTicket);
+router.get("/viewTicket", viewTicket);
 
 //Department
 router.post("/addDepartment", addDepartment);

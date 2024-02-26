@@ -11,11 +11,12 @@ const projectSchema = new mongoose.Schema({
   },
   milestone: {
     type: String,
-    required: true,
+    required: false,
   },
   projectManager: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
+      required: false,
     },
   technology: {
     type: String,
@@ -31,7 +32,7 @@ const projectSchema = new mongoose.Schema({
   },
   duration: {
     type: String,
-    required: false,
+    required: true,
   },
   deal: {
     type: Number,
@@ -39,7 +40,8 @@ const projectSchema = new mongoose.Schema({
   },
   client: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "Client",  
+    ref: "Client",
+    required: true,
   },
   priority:{
     type: String,
@@ -49,6 +51,7 @@ const projectSchema = new mongoose.Schema({
     {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
+      required: false,
     },
   ],
   description: {
