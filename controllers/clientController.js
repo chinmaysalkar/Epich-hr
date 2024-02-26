@@ -1,6 +1,6 @@
 const Client = require("../models/clientSchema");
 
-const createClient = async (req, res) => {
+const createClient = async (req, res, next) => {
   try {
     const uniqueId = `CLT_${Math.floor(Math.random() * 8889) + 1111}`;
     const {
@@ -46,14 +46,15 @@ const createClient = async (req, res) => {
       newClient,
     });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({
-      message: "Internal server error",
-    });
+    // console.error(error);
+    next(error);
+    // res.status(500).json({
+    //   message: "Internal server error",
+    // });
   }
 };
 
-const viewClient = async (req, res) => {
+const viewClient = async (req, res, next) => {
   try {
     const clientView = await Client.find({ status: true }).populate({
       path: "projects",
@@ -64,14 +65,11 @@ const viewClient = async (req, res) => {
       clientView,
     });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({
-      message: "Internal server error",
-    });
+    next(error);
   }
 };
 
-const deleteClient = async (req, res) => {
+const deleteClient = async (req, res, next) => {
   try {
     const clientId = req.params.clientId;
     const clientDeleted = await Client.findByIdAndUpdate(
@@ -89,10 +87,7 @@ const deleteClient = async (req, res) => {
       clientDeleted,
     });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({
-      message: "Internal server error",
-    });
+    next(error);
   }
 };
 
@@ -102,6 +97,7 @@ const updateClient = async (req, res) => {
     const clientUpdate = await Client.findByIdAndUpdate(clientId, req.body, {
       new: true,
     });
+
     if (!clientUpdate) {
       return res.status(404).json({
         message: "client Id not found for update client",

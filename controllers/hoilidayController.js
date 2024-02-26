@@ -1,9 +1,9 @@
 const Holiday = require("../models/holidayModel");
 const moment = require("moment");
-const addHoliday = async (req, res) => {
+const addHoliday = async (req, res, next) => {
   try {
     const { holidayName, holidayDate, holidayDay } = req.body;
-    const formattedDate = moment(holidayDate, "YYYY-MM-DD");
+    const formattedDate = moment(holidayDate).format("YYYY/MM/DD");
 
     const uniqueId = `HLD_${Math.floor(Math.random() * 8889) + 1111}`;
 
@@ -22,9 +22,10 @@ const addHoliday = async (req, res) => {
     });
   } catch (error) {
     console.error(error);
-    res.status(500).json({
-      message: "Internal server error",
-    });
+    next(error);
+    // res.status(500).json({
+    //   message: "Internal server error",
+    // });
   }
 };
 
@@ -37,16 +38,17 @@ const viewHoliday = async (req, res) => {
       holidays: allHolidays,
     });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({
-      message: "Internal server error",
-    });
+    next(error);
+    // console.error(error);
+    // res.status(500).json({
+    //   message: "Internal server error",
+    // });
   }
 };
-const updateHoliday = async (req, res) => {
+const updateHoliday = async (req, res, next) => {
   try {
     const holidayId = req.params.holidayId;
-    console.log(holidayId);
+
     const updatedHoliday = await Holiday.findByIdAndUpdate(
       holidayId,
       req.body,
@@ -67,10 +69,11 @@ const updateHoliday = async (req, res) => {
       updatedHoliday,
     });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({
-      message: "Internal server error",
-    });
+    next(error);
+    // console.error(error);
+    // res.status(500).json({
+    //   message: "Internal server error",
+    // });
   }
 };
 
@@ -95,16 +98,20 @@ const deleteHoliday = async (req, res) => {
       deletedHoliday,
     });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({
-      message: "Internal server error",
-    });
+    next(error);
+    // console.error(error);
+    // res.status(500).json({
+    //   message: "Internal server error",
+    // });
   }
 };
+
+
 
 module.exports = {
   addHoliday,
   viewHoliday,
   updateHoliday,
   deleteHoliday,
+
 };
