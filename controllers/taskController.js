@@ -25,6 +25,7 @@ const viewTask = async (req, res, next) => {
   try {
     const viewtask = await Taskboard.find({ status: "true" }).populate({
       path: "team",
+      select: ["_id", "fullName"],
     });
     res.status(200).json({
       message: "task shown succesfully",
@@ -49,19 +50,19 @@ const updateTask = async (req, res, next) => {
     next(error);
   }
 };
-const deleteT = async (req, res, next) => {
+const deleteTask = async (req, res, next) => {
   try {
     const task = req.params.Id;
     const deletetask = await Taskboard.findByIdAndUpdate(
       task,
-      req.body,
       { $set: { status: false } },
       { new: true }
     );
-    if (!deketetask) {
+    console.log(deletetask);
+    if (!deletetask) {
       return res.status(400).json({ message: "task id not foundk" });
     }
-    res.status(200).json({ message: "deleted succesfully" });
+    res.status(200).json({ message: "deleted succesfully", deletetask });
   } catch (error) {
     next(error);
   }
@@ -70,7 +71,6 @@ const deleteT = async (req, res, next) => {
 module.exports = {
   addTask,
   viewTask,
-  //   deleteTask,
   updateTask,
-  deleteT,
+  deleteTask,
 };

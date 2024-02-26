@@ -49,7 +49,6 @@ const {
   viewTask,
   updateTask,
   deleteTask,
-  deleteT,
 } = require("../controllers/taskController");
 const image = upload.fields([{ name: "image", maxCount: 1 }]);
 const router = express.Router();
@@ -97,6 +96,6 @@ router.delete("/deleteClient/:clientId", deleteClient);
 router.post("/addtask", addTask);
 router.get("/viewTask", viewTask);
 router.put("/updateTask/:taskId", updateTask);
-router.delete("/deleteTask/:Id", deleteT);
+router.delete("/deleteTask/:Id", deleteTask);
 
 module.exports = router;
